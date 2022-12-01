@@ -31,7 +31,7 @@ und ist insgesamt eine moderne Sprache.
 
 ## Setting
 
-Ich schreibe meinen Code für den diesjährigen AdventOfCode in Eixir [livebooks](livebook.dev).  
+Ich schreibe meinen Code für den diesjährigen AdventOfCode in Eixir [livebooks](https://livebook.dev).  
 Livebooks,
 ähnlich wie z.B. Jupyter Notebooks,
 entfernen den "compile/run cycle"
