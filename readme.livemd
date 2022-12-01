@@ -1,0 +1,58 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# README
+
+## About Me
+
+Ich bin aktuell Masterstudent Informatik an der HAW Hamburg.
+Im Rahmen der Bachelor-Vorlesungen
+"Algorithmen und Datenstrukturen"
+und
+"Verteilte Systeme"
+haben wir bei 
+[Prof. Dr. Klauck](https://users.informatik.haw-hamburg.de/~klauck/)
+Erlang kennengelernt.
+
+Erlang nutzt viele interessante Ansätze,
+wie z.B.
+funktionale Programmierung,
+Nebenläufigkeit,
+das Versenden von Nachrichten zwischen Prozessen
+und Pattern Matching.
+Für den diesjährigen AdventOfCode
+möchte ich mich in 
+der auf Erlang aufbauenden
+Programmiersprache
+Elixir
+ausprobieren.
+Elixir nutzt die schönen Seiten von Erlang
+und ergänzt sie durch eine insgesamt angenehmere Syntax
+und ist insgesamt eine moderne Sprache.
+
+## Setting
+
+Ich schreibe meinen Code für den diesjährigen AdventOfCode in Eixir [livebooks](livebook.dev).  
+Livebooks,
+ähnlich wie z.B. Jupyter Notebooks,
+entfernen den "compile/run cycle"
+und die Lineare Ausführung jeder einzelnen Codezeile
+aus der Programmierung,
+ermöglichen schnellere Feedbackschleifen
+und erlauben schnellere Einblicke in den Zustand der Ausführung.
+
+Siehe auch
+[Stop Writing Dead Programs](https://www.youtube.com/watch?v=8Ab3ArE8W3s).
+
+## Ziele / Challenges
+
+Abgesehen davon, dass das Erlerne einer neuen Sprache schon eine gewisse Challenge darstellt,
+möchte ich lösungen entwicklen, die nah am Optimum sind.
+Hierbei meine ich nicht den "kürzesten" Code,
+sondern einen, den ich für lesbar halte.
+Außerdem soll der Code nicht "einfach nur funktionieren", sondern schonend mit CPU-Zyklen und dem Arbeitsspeicher umgehen.
+
+## Feedback
+
+Ich lerne sehr viel dazu
+und finde eine der Besonderheiten vom AdventOfCode ist, dass man sich sehr gut mit anderen Leuten über die Lösungswege austauschen kann.
+Ich würde mich also über Deine Anmerkungen freuen 😃
