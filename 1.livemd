@@ -69,20 +69,20 @@ defmodule Advent do
     count(input_list, [], 0)
   end
 
-  defp count([head | tail], elv, max) when head == "" do
-    elv_sum =
-      elv
+  defp count([head | tail], elf, max) when head == "" do
+    elf_sum =
+      elf
       |> Enum.map(&String.to_integer/1)
       |> Enum.sum()
 
-    max = Enum.max([elv_sum, max])
+    max = Enum.max([elf_sum, max])
 
     count(tail, [], max)
   end
 
-  defp count([head | tail], elv, max) do
-    elv = [head | elv]
-    count(tail, elv, max)
+  defp count([head | tail], elf, max) do
+    elf = [head | elf]
+    count(tail, elf, max)
   end
 
   defp count([], _, max) do
@@ -169,8 +169,8 @@ defmodule Advent do
     count(input_list, [], [], top)
   end
 
-  defp elfsum(elv) do
-    elv
+  defp elfsum(elf) do
+    elf
     |> Enum.map(&String.to_integer/1)
     |> Enum.sum()
   end
