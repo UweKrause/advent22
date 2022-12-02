@@ -109,10 +109,54 @@ Find the top three Elves carrying the most Calories. How many Calories are those
 
 ```elixir
 defmodule Topper do
+  @moduledoc """
+  Finds the top x elements from a list.
+  """
+
+  @doc """
+  Finds the top x elements from a list.
+
+
+  ## Parameters
+
+    - list: List, usefull when filled with elements
+    
+    - top: How many top elements 
+
+  ## Examples
+
+    iex> Topper.top([], 3)
+    []
+
+    iex> Topper.top([1], 3)
+    [1]
+
+    iex> Topper.top([1,2], 3)
+    [2, 1]
+    
+    iex> Topper.top([2,1], 3)
+    [2, 1]
+
+    iex> Topper.top([1, 2, 3], 3)
+    [3, 2, 1]
+
+    iex> Topper.top([1, 2, 3, 4], 3)
+    [4, 3, 2]
+
+    iex> Topper.top([4, 3, 2, 1], 3)
+    [4, 3, 2]
+
+    iex> Topper.top([2, 3, 4, 1], 3)
+    [4, 3, 2]
+
+  """
   def top(list, top) do
     top(list, [], top)
   end
 
+  # at the moment all this is not necessary!
+  # the goal was/is to use a better solution
+  # as to rely on sorting
   defp top([head | tail], toplist, top) do
     topX =
       [head | toplist]
@@ -127,32 +171,8 @@ defmodule Topper do
   end
 end
 
-top = 3
-
-# Inline Testfälle, ist doch auch nice!?
-
-IO.inspect(Topper.top([], top))
-IO.inspect(Topper.top([1], top))
-IO.inspect(Topper.top([1, 2], top))
-IO.inspect(Topper.top([2, 1], top))
-IO.inspect(Topper.top([1, 2, 3], top))
-IO.inspect(Topper.top([1, 2, 3, 4], top))
-IO.inspect(Topper.top([4, 3, 2, 1], top))
-IO.inspect(Topper.top([2, 3, 4, 1], top))
+# Output wie deaktivieren?
 :ok
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-[]
-[1]
-[2, 1]
-[2, 1]
-[3, 2, 1]
-[4, 3, 2]
-[4, 3, 2]
-[4, 3, 2]
 ```
 
 <!-- livebook:{"output":true} -->
