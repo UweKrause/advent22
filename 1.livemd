@@ -59,11 +59,6 @@ In case the Elves get hungry and need extra snacks, they need to know which Elf 
 Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
 
 ```elixir
-input_list =
-  File.stream!(input)
-  |> Stream.map(&String.trim/1)
-  |> Enum.to_list()
-
 defmodule Advent do
   def count(input_list) do
     count(input_list, [], 0)
@@ -90,7 +85,10 @@ defmodule Advent do
   end
 end
 
-Advent.count(input_list)
+File.stream!(input)
+|> Stream.map(&String.trim/1)
+|> Enum.to_list()
+|> Advent.count()
 ```
 
 <!-- livebook:{"output":true} -->
@@ -169,12 +167,6 @@ defmodule Advent do
     count(input_list, [], [], top)
   end
 
-  defp elfsum(elf) do
-    elf
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.sum()
-  end
-
   defp count([head | tail], elf, sums, top) when head == "" do
     sums = Topper.top([elfsum(elf) | sums], top)
     count(tail, [], sums, top)
@@ -188,18 +180,19 @@ defmodule Advent do
   defp count([], _, sums, _) do
     sums
   end
+
+  defp elfsum(elf) do
+    elf
+    |> Enum.map(&String.to_integer/1)
+    |> Enum.sum()
+  end
 end
 
-input_list =
-  File.stream!(input)
-  |> Stream.map(&String.trim/1)
-  |> Enum.to_list()
-
-top = 3
-
-sums =
-  Advent.count(input_list, top)
-  |> Enum.sum()
+File.stream!(input)
+|> Stream.map(&String.trim/1)
+|> Enum.to_list()
+|> Advent.count(3)
+|> Enum.sum()
 ```
 
 <!-- livebook:{"output":true} -->
