@@ -2,7 +2,7 @@
 
 # Day 1: Calorie Counting
 
-## Input
+## Story
 
 The jungle must be too overgrown and difficult to navigate in vehicles or access from the air; the Elves' expedition traditionally goes on foot. As your boats approach land, the Elves begin taking inventory of their supplies. One important consideration is food - in particular, the number of Calories each Elf is carrying (your puzzle input).
 
@@ -10,8 +10,8 @@ The Elves take turns writing down the number of Calories contained by the variou
 
 For example, suppose the Elves finish writing their items' Calories and end up with the following list:
 
-```elixir
-"1000
+```
+1000
 2000
 3000
 
@@ -25,13 +25,6 @@ For example, suppose the Elves finish writing their items' Calories and end up w
 9000
 
 10000
-"
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-"1000\n2000\n3000\n\n4000\n\n5000\n6000\n\n7000\n8000\n9000\n\n10000\n"
 ```
 
 This list represents the Calories of the food carried by five Elves:
@@ -41,18 +34,6 @@ This list represents the Calories of the food carried by five Elves:
 * The third Elf is carrying food with 5000 and 6000 Calories, a total of 11000 Calories.
 * The fourth Elf is carrying food with 7000, 8000, and 9000 Calories, a total of 24000 Calories.
 * The fifth Elf is carrying one food item with 10000 Calories.
-
-```elixir
-input = "/home/uwe/ctf/advent22/1.txt"
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-"/home/uwe/ctf/advent22/1.txt"
-```
-
-## Part One
 
 In case the Elves get hungry and need extra snacks, they need to know which Elf to ask: they'd like to know how many Calories are being carried by the Elf carrying the most Calories. In the example above, this is `24000` (carried by the fourth Elf).
 
@@ -85,7 +66,7 @@ defmodule Advent do
   end
 end
 
-File.stream!(input)
+File.stream!("/home/uwe/ctf/advent22/1.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.to_list()
 |> Advent.count()
@@ -208,7 +189,7 @@ defmodule Advent do
   end
 end
 
-File.stream!(input)
+File.stream!("/home/uwe/ctf/advent22/1.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.to_list()
 |> Advent.count(3)
