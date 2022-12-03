@@ -1,3 +1,5 @@
+<!-- livebook:{"persist_outputs":true} -->
+
 # Day 2: Rock Paper Scissors
 
 ## Story
@@ -79,6 +81,12 @@ File.stream!("/home/uwe/ctf/advent22/2.txt")
 |> Enum.sum()
 ```
 
+<!-- livebook:{"output":true} -->
+
+```
+12794
+```
+
 ## Part Two
 
 The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
@@ -152,4 +160,10 @@ File.stream!("/home/uwe/ctf/advent22/2.txt")
 |> Stream.map(&String.split/1)
 |> Stream.map(&Advent.calculate_round/1)
 |> Enum.sum()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+14979
 ```
