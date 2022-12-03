@@ -34,15 +34,16 @@ What would your total score be if everything goes exactly according to your stra
 
 ```elixir
 defmodule Advent do
-  def calculate([other, me]) do
+  def calculate_round([other, me]) do
     calculate(replace(other), replace(me))
   end
 
-  # A for Rock, B for Paper, and C for Scissors
-  # X for Rock, Y for Paper, and Z for Scissors
+  # A for Rock, B for Paper, and C for Scissors  
   defp replace("A"), do: :r
   defp replace("B"), do: :p
   defp replace("C"), do: :s
+
+  # X for Rock, Y for Paper, and Z for Scissors
   defp replace("X"), do: :r
   defp replace("Y"), do: :p
   defp replace("Z"), do: :s
@@ -66,7 +67,7 @@ defmodule Advent do
   defp score_rpc(:p, :s), do: 6
   defp score_rpc(:r, :p), do: 6
   # draws  
-  defp score_rpc(x, x), do: 3
+  defp score_rpc(same, same), do: 3
   # all remaining cases are losses
   defp score_rpc(_other, _me), do: 0
 end
@@ -74,6 +75,81 @@ end
 File.stream!("/home/uwe/ctf/advent22/2.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.split/1)
-|> Stream.map(&Advent.calculate/1)
+|> Stream.map(&Advent.calculate_round/1)
+|> Enum.sum()
+```
+
+## Part Two
+
+The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
+
+The total score is still calculated in the same way, but now you need to figure out what shape to choose so the round ends as indicated. The example above now goes like this:
+
+* In the first round, your opponent will choose Rock (A), and you need the round to end in a draw (Y), so you also choose Rock. This gives you a score of 1 + 3 = 4.
+* In the second round, your opponent will choose Paper (B), and you choose Rock so you lose (X) with a score of 1 + 0 = 1.
+* In the third round, you will defeat your opponent's Scissors with Rock for a score of 1 + 6 = 7.
+
+Now that you're correctly decrypting the ultra top secret strategy guide, you would get a total score of **12**.
+
+Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?
+
+```elixir
+defmodule Advent do
+  def calculate_round([other, me]) do
+    calculate(replace(other), replace(me))
+  end
+
+  # A for Rock, B for Paper, and C for Scissors
+  defp replace("A"), do: :r
+  defp replace("B"), do: :p
+  defp replace("C"), do: :s
+
+  # X means you need to lose
+  # Y means you need to end the round in a draw
+  # and Z means you need to win
+  defp replace("X"), do: :lose
+  defp replace("Y"), do: :draw
+  defp replace("Z"), do: :win
+
+  # The score for a single round is
+  # the score for the shape you selected
+  # plus the score for the outcome of the round
+  defp calculate(other, choose) do
+    me = choose(other, choose)
+    score_shape(me) + score_rpc(other, me)
+  end
+
+  # (1 for Rock, 2 for Paper, and 3 for Scissors)
+  defp score_shape(:r), do: 1
+  defp score_shape(:p), do: 2
+  defp score_shape(:s), do: 3
+
+  # (0 if you lost, 3 if the round was a draw, and 6 if you won).
+  # cases where I (right) win
+  # (opponent, me)
+  defp score_rpc(:s, :r), do: 6
+  defp score_rpc(:p, :s), do: 6
+  defp score_rpc(:r, :p), do: 6
+  # draws  
+  defp score_rpc(same, same), do: 3
+  # all remaining cases are losses
+  defp score_rpc(_other, _me), do: 0
+
+  # decide what to choose, depending on
+  # what the other person has choosen
+  # and what outcome I want
+  defp choose(:r, :win), do: :p
+  defp choose(:p, :win), do: :s
+  defp choose(:s, :win), do: :r
+  defp choose(same, :draw), do: same
+  defp choose(:r, :lose), do: :s
+  defp choose(:p, :lose), do: :r
+  defp choose(:s, :lose), do: :p
+end
+
+File.stream!("/home/uwe/ctf/advent22/2.txt")
+|> Stream.map(&String.trim/1)
+|> Stream.map(&String.split/1)
+|> Stream.map(&Advent.calculate_round/1)
 |> Enum.sum()
 ```
