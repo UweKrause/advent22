@@ -33,7 +33,47 @@ In this example, if you were to follow the strategy guide, you would get a total
 What would your total score be if everything goes exactly according to your strategy guide?
 
 ```elixir
+defmodule Advent do
+  def calculate([other, me]) do
+    calculate(replace(other), replace(me))
+  end
+
+  # A for Rock, B for Paper, and C for Scissors
+  # X for Rock, Y for Paper, and Z for Scissors
+  defp replace("A"), do: :r
+  defp replace("B"), do: :p
+  defp replace("C"), do: :s
+  defp replace("X"), do: :r
+  defp replace("Y"), do: :p
+  defp replace("Z"), do: :s
+
+  # The score for a single round is
+  # the score for the shape you selected
+  # plus the score for the outcome of the round
+  defp calculate(other, me) do
+    score_shape(me) + score_rpc(other, me)
+  end
+
+  # (1 for Rock, 2 for Paper, and 3 for Scissors)
+  defp score_shape(:r), do: 1
+  defp score_shape(:p), do: 2
+  defp score_shape(:s), do: 3
+
+  # (0 if you lost, 3 if the round was a draw, and 6 if you won).
+  # cases where I (right) win
+  # (opponent, me)
+  defp score_rpc(:s, :r), do: 6
+  defp score_rpc(:p, :s), do: 6
+  defp score_rpc(:r, :p), do: 6
+  # draws  
+  defp score_rpc(x, x), do: 3
+  # all remaining cases are losses
+  defp score_rpc(_other, _me), do: 0
+end
+
 File.stream!("/home/uwe/ctf/advent22/2.txt")
 |> Stream.map(&String.trim/1)
-|> Enum.to_list()
+|> Stream.map(&String.split/1)
+|> Stream.map(&Advent.calculate/1)
+|> Enum.sum()
 ```
