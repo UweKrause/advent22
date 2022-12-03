@@ -89,110 +89,45 @@ In the example above, the top three Elves are the fourth Elf (with 24000 Calorie
 Find the top three Elves carrying the most Calories. How many Calories are those Elves carrying in total?
 
 ```elixir
-defmodule Topper do
-  @moduledoc """
-  Finds the top x elements from a list.
-  """
-
-  @doc """
-  Finds the top x elements from a list.
-
-
-  ## Parameters
-
-    - list: List, usefull when filled with elements
-    
-    - top: How many top elements 
-
-  ## Examples
-
-    iex> Topper.top([], 3)
-    []
-
-    iex> Topper.top([1], 3)
-    [1]
-
-    iex> Topper.top([1,2], 3)
-    [2, 1]
-    
-    iex> Topper.top([2,1], 3)
-    [2, 1]
-
-    iex> Topper.top([1, 2, 3], 3)
-    [3, 2, 1]
-
-    iex> Topper.top([1, 2, 3, 4], 3)
-    [4, 3, 2]
-
-    iex> Topper.top([4, 3, 2, 1], 3)
-    [4, 3, 2]
-
-    iex> Topper.top([2, 3, 4, 1], 3)
-    [4, 3, 2]
-
-  """
-  def top(list, top) do
-    top(list, [], top)
-  end
-
-  # at the moment all this is not necessary!
-  # the goal was/is to use a better solution
-  # as to rely on sorting
-  defp top([head | tail], toplist, top) do
-    topX =
-      [head | toplist]
-      |> Enum.sort(:desc)
-      |> Enum.take(top)
-
-    top(tail, topX, top)
-  end
-
-  defp top([], toplist, _) do
-    toplist
-  end
-end
-
-# Output wie deaktivieren?
-:ok
-```
-
-<!-- livebook:{"output":true} -->
-
-```
-:ok
-```
-
-```elixir
 defmodule Advent do
-  def count(input_list, top) do
-    count(input_list, [], [], top)
+  def count(input_list) do
+    count(input_list, [], [])
   end
 
-  defp count([head | tail], elf, sums, top) when head == "" do
-    sums = Topper.top([elfsum(elf) | sums], top)
-    count(tail, [], sums, top)
+  # When the current line is empty,
+  # sum up the calories for this elf
+  # and compare this elves calorie sum to the top 3 of the previous elves.
+  # Continue with the remaining elves
+  defp count([food | tail], elf, sums) when food == "" do
+    elfsum =
+      elf
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.sum()
+
+    top3_sums =
+      [elfsum | sums]
+      |> Enum.sort(:desc)
+      |> Enum.take(3)
+
+    count(tail, [], top3_sums)
   end
 
-  defp count([head | tail], elf, sums, top) do
-    elf = [head | elf]
-    count(tail, elf, sums, top)
+  # add the calories from this elf to its itemlist
+  defp count([food | tail], elf, sums) do
+    elf = [food | elf]
+    count(tail, elf, sums)
   end
 
-  defp count([], _, sums, _) do
+  # Last elf, return the calorie sums
+  defp count([], _, sums) do
     sums
-  end
-
-  defp elfsum(elf) do
-    elf
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.sum()
   end
 end
 
 File.stream!("/home/uwe/ctf/advent22/1.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.to_list()
-|> Advent.count(3)
+|> Advent.count()
 |> Enum.sum()
 ```
 
