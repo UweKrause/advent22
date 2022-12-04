@@ -2,6 +2,19 @@
 
 # Day 3: Rucksack Reorganization
 
+```elixir
+Mix.install([
+  {:benchee, "~> 1.1"},
+  {:benchee_html, "~> 1.0"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 ## Story
 
 One Elf has the important job of loading all of the rucksacks with supplies for the jungle journey. Unfortunately, that Elf didn't quite follow the packing instructions, and so a few items now need to be rearranged.
@@ -40,7 +53,17 @@ In the above example, the priority of the item type that appears in both compart
 Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
 
 ```elixir
-defmodule Advent do
+defmodule Advent1 do
+  def solve() do
+    File.stream!("#{File.cwd!()}/input/3.txt")
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.graphemes/1)
+    |> Stream.map(&chunk/1)
+    |> Stream.map(&find_duplicate/1)
+    |> Stream.map(&get_priority/1)
+    |> Enum.sum()
+  end
+
   def chunk(rucksack) do
     compartment_size = round(length(rucksack) / 2)
     Enum.chunk_every(rucksack, compartment_size)
@@ -64,13 +87,7 @@ defmodule Advent do
   end
 end
 
-File.stream!("#{File.cwd!()}/input/3.txt")
-|> Stream.map(&String.trim/1)
-|> Stream.map(&String.graphemes/1)
-|> Stream.map(&Advent.chunk/1)
-|> Stream.map(&Advent.find_duplicate/1)
-|> Stream.map(&Advent.get_priority/1)
-|> Enum.sum()
+Advent1.solve()
 ```
 
 <!-- livebook:{"output":true} -->
@@ -112,7 +129,16 @@ Priorities for these items must still be found to organize the sticker attachmen
 Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?
 
 ```elixir
-defmodule Advent do
+defmodule Advent2 do
+  def solve() do
+    File.stream!("#{File.cwd!()}/input/3.txt")
+    |> Stream.map(&String.trim/1)
+    |> Stream.chunk_every(3)
+    |> Stream.map(&find_badge/1)
+    |> Stream.map(&get_priority/1)
+    |> Enum.sum()
+  end
+
   def find_badge([elf1, elf2, elf3]) do
     elf1
     |> String.graphemes()
@@ -134,16 +160,59 @@ defmodule Advent do
   end
 end
 
-File.stream!("#{File.cwd!()}/input/3.txt")
-|> Stream.map(&String.trim/1)
-|> Stream.chunk_every(3)
-|> Stream.map(&Advent.find_badge/1)
-|> Stream.map(&Advent.get_priority/1)
-|> Enum.sum()
+Advent2.solve()
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
 2587
+```
+
+## Benchmark
+
+```elixir
+Benchee.run(%{
+  "Part 1" => &Advent1.solve/0,
+  "Part 2" => &Advent2.solve/0
+})
+
+:ok
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Operating System: Linux
+CPU Information: Intel(R) Core(TM) i7-5500U CPU @ 2.40GHz
+Number of Available Cores: 4
+Available memory: 7.69 GB
+Elixir 1.14.0
+Erlang 25.1.2
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 0 ns
+reduction time: 0 ns
+parallel: 1
+inputs: none specified
+Estimated total run time: 14 s
+
+Benchmarking Part 1 ...
+Benchmarking Part 2 ...
+
+Name             ips        average  deviation         median         99th %
+Part 1        239.39        4.18 ms    ±22.05%        3.80 ms        7.02 ms
+Part 2         64.92       15.40 ms     ±6.79%       15.12 ms       17.92 ms
+
+Comparison: 
+Part 1        239.39
+Part 2         64.92 - 3.69x slower +11.23 ms
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```

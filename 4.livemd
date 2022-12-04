@@ -2,6 +2,19 @@
 
 # Day 4: Camp Cleanup
 
+```elixir
+Mix.install([
+  {:benchee, "~> 1.1"},
+  {:benchee_html, "~> 1.0"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
 ## Story
 
 Space needs to be cleared before the last supplies can be unloaded from the ships, and so several Elves have been assigned the job of cleaning up sections of the camp. Every section has a unique ID number, and each Elf is assigned a range of section IDs.
@@ -52,7 +65,16 @@ Some of the pairs have noticed that one of their assignments fully contains the 
 In how many assignment pairs does one range fully contain the other?
 
 ```elixir
-defmodule Advent do
+defmodule Advent1 do
+  def solve do
+    File.stream!("#{File.cwd!()}/input/4.txt")
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(fn x -> String.split(x, ",") end)
+    |> Stream.map(&split/1)
+    |> Stream.map(&in_range/1)
+    |> Enum.sum()
+  end
+
   def split([left, right]) do
     (String.split(left, "-") ++ String.split(right, "-"))
     |> Stream.map(&String.to_integer/1)
@@ -64,12 +86,7 @@ defmodule Advent do
   def in_range(_), do: 0
 end
 
-File.stream!("#{File.cwd!()}/input/4.txt")
-|> Stream.map(&String.trim/1)
-|> Stream.map(fn x -> String.split(x, ",") end)
-|> Stream.map(&Advent.split/1)
-|> Stream.map(&Advent.in_range/1)
-|> Enum.sum()
+Advent1.solve()
 ```
 
 <!-- livebook:{"output":true} -->
@@ -94,7 +111,18 @@ So, in this example, the number of overlapping assignment pairs is 4.
 In how many assignment pairs do the ranges overlap?
 
 ```elixir
-defmodule Advent do
+defmodule Advent2 do
+  def solve() do
+    File.stream!("#{File.cwd!()}/input/4.txt")
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(fn x -> String.split(x, ",") end)
+    |> Stream.map(&split/1)
+    |> Stream.map(&overlap?/1)
+    |> Stream.filter(fn x -> x end)
+    |> Enum.to_list()
+    |> length()
+  end
+
   def split([left, right]) do
     (String.split(left, "-") ++ String.split(right, "-"))
     |> Stream.map(&String.to_integer/1)
@@ -116,18 +144,59 @@ defmodule Advent do
   def bool_to_int(_), do: 0
 end
 
-File.stream!("#{File.cwd!()}/input/4.txt")
-|> Stream.map(&String.trim/1)
-|> Stream.map(fn x -> String.split(x, ",") end)
-|> Stream.map(&Advent.split/1)
-|> Stream.map(&Advent.overlap?/1)
-|> Stream.filter(fn x -> x end)
-|> Enum.to_list()
-|> length()
+Advent2.solve()
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
 839
+```
+
+## Benchmark
+
+```elixir
+Benchee.run(%{
+  "Part 1" => &Advent1.solve/0,
+  "Part 2" => &Advent2.solve/0
+})
+
+:ok
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+Operating System: Linux
+CPU Information: Intel(R) Core(TM) i7-5500U CPU @ 2.40GHz
+Number of Available Cores: 4
+Available memory: 7.69 GB
+Elixir 1.14.0
+Erlang 25.1.2
+
+Benchmark suite executing with the following configuration:
+warmup: 2 s
+time: 5 s
+memory time: 0 ns
+reduction time: 0 ns
+parallel: 1
+inputs: none specified
+Estimated total run time: 14 s
+
+Benchmarking Part 1 ...
+Benchmarking Part 2 ...
+
+Name             ips        average  deviation         median         99th %
+Part 1        284.59        3.51 ms    ±23.62%        3.16 ms        6.47 ms
+Part 2        275.95        3.62 ms    ±25.04%        3.23 ms        6.60 ms
+
+Comparison: 
+Part 1        284.59
+Part 2        275.95 - 1.03x slower +0.110 ms
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
 ```
