@@ -52,18 +52,17 @@ defmodule Advent do
     uniq_left = Enum.uniq(compartment_left)
     uniq_right = Enum.uniq(compartment_right)
 
-    uniq_left -- uniq_left -- uniq_right
+    hd(uniq_left -- uniq_left -- uniq_right)
   end
 
-  # TODO: clean up this mess...
-  def get_priority([item]) when item >= "a" and item <= "z" do
-    <<x::utf8>> = item
-    x - ?a + 1
+  def get_priority(item) when item >= "a" and item <= "z" do
+    <<codepoint::utf8>> = item
+    codepoint - ?a + 1
   end
 
-  def get_priority([item]) when item >= "A" and item <= "Z" do
-    <<x::utf8>> = item
-    x - ?A + 26 + 1
+  def get_priority(item) when item >= "A" and item <= "Z" do
+    <<codepoint::utf8>> = item
+    codepoint - ?A + 26 + 1
   end
 end
 
