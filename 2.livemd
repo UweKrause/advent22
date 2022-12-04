@@ -40,18 +40,15 @@ defmodule Advent do
     calculate(replace(other), replace(me))
   end
 
-  defp replace(letter) do
-    case letter do
-      # A for Rock, B for Paper, and C for Scissors
-      "A" -> :r
-      "B" -> :p
-      "C" -> :s
-      # X for Rock, Y for Paper, and Z for Scissors
-      "X" -> :r
-      "Y" -> :p
-      "Z" -> :s
-    end
-  end
+  # A for Rock, B for Paper, and C for Scissors  
+  defp replace("A"), do: :r
+  defp replace("B"), do: :p
+  defp replace("C"), do: :s
+
+  # X for Rock, Y for Paper, and Z for Scissors
+  defp replace("X"), do: :r
+  defp replace("Y"), do: :p
+  defp replace("Z"), do: :s
 
   # The score for a single round is
   # the score for the shape you selected
@@ -61,13 +58,9 @@ defmodule Advent do
   end
 
   # (1 for Rock, 2 for Paper, and 3 for Scissors)
-  defp score_shape(shape) do
-    case shape do
-      :r -> 1
-      :p -> 2
-      :s -> 3
-    end
-  end
+  defp score_shape(:r), do: 1
+  defp score_shape(:p), do: 2
+  defp score_shape(:s), do: 3
 
   # (0 if you lost, 3 if the round was a draw, and 6 if you won).
   # cases where I (right) win
