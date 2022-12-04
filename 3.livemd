@@ -64,7 +64,7 @@ defmodule Advent do
   end
 end
 
-File.stream!("/home/uwe/ctf/advent22/3.txt")
+File.stream!("/home/uwe/ctf/advent22/input/3.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.graphemes/1)
 |> Stream.map(&Advent.chunk/1)
@@ -134,7 +134,7 @@ defmodule Advent do
   end
 end
 
-File.stream!("/home/uwe/ctf/advent22/3.txt")
+File.stream!("/home/uwe/ctf/advent22/input/3.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.chunk_every(3)
 |> Stream.map(&Advent.find_badge/1)

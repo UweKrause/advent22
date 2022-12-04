@@ -81,7 +81,7 @@ defmodule Advent do
   defp score_rpc(_other, _me), do: 0
 end
 
-File.stream!("/home/uwe/ctf/advent22/2.txt")
+File.stream!("/home/uwe/ctf/advent22/input/2.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.split/1)
 |> Stream.map(&Advent.calculate_round/1)
@@ -162,7 +162,7 @@ defmodule Advent do
   defp choose(:s, :lose), do: :p
 end
 
-File.stream!("/home/uwe/ctf/advent22/2.txt")
+File.stream!("/home/uwe/ctf/advent22/input/2.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.split/1)
 |> Stream.map(&Advent.calculate_round/1)

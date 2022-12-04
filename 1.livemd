@@ -66,7 +66,7 @@ defmodule Advent do
   end
 end
 
-File.stream!("/home/uwe/ctf/advent22/1.txt")
+File.stream!("/home/uwe/ctf/advent22/input/1.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.to_list()
 |> Advent.count()
@@ -124,7 +124,7 @@ defmodule Advent do
   end
 end
 
-File.stream!("/home/uwe/ctf/advent22/1.txt")
+File.stream!("/home/uwe/ctf/advent22/input/1.txt")
 |> Stream.map(&String.trim/1)
 |> Enum.to_list()
 |> Advent.count()
