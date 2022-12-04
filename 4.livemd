@@ -64,7 +64,7 @@ defmodule Advent do
   def in_range(_), do: 0
 end
 
-File.stream!("/home/uwe/ctf/advent22/input/4.txt")
+File.stream!("#{File.cwd!()}/input/4.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(fn x -> String.split(x, ",") end)
 |> Stream.map(&Advent.split/1)
@@ -116,7 +116,7 @@ defmodule Advent do
   def bool_to_int(_), do: 0
 end
 
-File.stream!("/home/uwe/ctf/advent22/input/4.txt")
+File.stream!("#{File.cwd!()}/input/4.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(fn x -> String.split(x, ",") end)
 |> Stream.map(&Advent.split/1)
