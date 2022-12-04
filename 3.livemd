@@ -40,14 +40,44 @@ In the above example, the priority of the item type that appears in both compart
 Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
 
 ```elixir
-File.stream!("/home/uwe/ctf/advent22/3_example.txt")
+defmodule Advent do
+  def chunk(rucksack) do
+    compartment_size = round(length(rucksack) / 2)
+
+    rucksack
+    |> Enum.chunk_every(compartment_size)
+  end
+
+  def find_duplicate([compartment_left, compartment_right]) do
+    uniq_left = Enum.uniq(compartment_left)
+    uniq_right = Enum.uniq(compartment_right)
+
+    uniq_left -- uniq_left -- uniq_right
+  end
+
+  # TODO: clean up this mess...
+  def get_priority([item]) when item >= "a" and item <= "z" do
+    <<x::utf8>> = item
+    x - ?a + 1
+  end
+
+  def get_priority([item]) when item >= "A" and item <= "Z" do
+    <<x::utf8>> = item
+    x - ?A + 26 + 1
+  end
+end
+
+File.stream!("/home/uwe/ctf/advent22/3.txt")
 |> Stream.map(&String.trim/1)
-|> Enum.to_list()
+|> Stream.map(&String.graphemes/1)
+|> Stream.map(&Advent.chunk/1)
+|> Stream.map(&Advent.find_duplicate/1)
+|> Stream.map(&Advent.get_priority/1)
+|> Enum.sum()
 ```
 
 <!-- livebook:{"output":true} -->
 
 ```
-["vJrwpWtwJgWrhcsFMMfFFhFp", "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL", "PmmdzqPrVvPwwTWBwg",
- "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn", "ttgJtRGJQctTZtZT", "CrZsJsPPZsGzwwsLwLmpwMDw"]
+8240
 ```
