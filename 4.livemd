@@ -101,15 +101,15 @@ defmodule Advent do
     |> Enum.to_list()
   end
 
-  def between?(l, m, r) do
-    l <= m and m <= r
-  end
-
   def overlap?([a, b, x, y]) do
     between?(a, x, b) or
       between?(a, y, b) or
       between?(x, a, y) or
       between?(x, b, y)
+  end
+
+  def between?(l, m, r) do
+    l <= m and m <= r
   end
 
   def bool_to_int(true), do: 1
@@ -121,9 +121,9 @@ File.stream!("/home/uwe/ctf/advent22/4.txt")
 |> Stream.map(fn x -> String.split(x, ",") end)
 |> Stream.map(&Advent.split/1)
 |> Stream.map(&Advent.overlap?/1)
-|> Stream.map(&Advent.bool_to_int/1)
+|> Stream.filter(fn x -> x end)
 |> Enum.to_list()
-|> Enum.sum()
+|> length()
 ```
 
 <!-- livebook:{"output":true} -->
