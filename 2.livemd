@@ -36,8 +36,8 @@ What would your total score be if everything goes exactly according to your stra
 
 ```elixir
 defmodule Advent do
-  def calculate_round([other, me]) do
-    calculate(replace(other), replace(me))
+  def score_single_round([other, me]) do
+    score_single_round(replace(other), replace(me))
   end
 
   # A for Rock, B for Paper, and C for Scissors  
@@ -53,8 +53,8 @@ defmodule Advent do
   # The score for a single round is
   # the score for the shape you selected
   # plus the score for the outcome of the round
-  defp calculate(other, me) do
-    score_shape(me) + score_rpc(other, me)
+  defp score_single_round(other, me) do
+    score_shape(me) + score_outcome(other, me)
   end
 
   # (1 for Rock, 2 for Paper, and 3 for Scissors)
@@ -63,21 +63,20 @@ defmodule Advent do
   defp score_shape(:s), do: 3
 
   # (0 if you lost, 3 if the round was a draw, and 6 if you won).
-  # cases where I (right) win
   # (other, me)
-  defp score_rpc(:s, :r), do: 6
-  defp score_rpc(:p, :s), do: 6
-  defp score_rpc(:r, :p), do: 6
+  defp score_outcome(:s, :r), do: 6
+  defp score_outcome(:p, :s), do: 6
+  defp score_outcome(:r, :p), do: 6
   # draws  
-  defp score_rpc(same, same), do: 3
+  defp score_outcome(same, same), do: 3
   # all remaining cases are losses
-  defp score_rpc(_other, _me), do: 0
+  defp score_outcome(_other, _me), do: 0
 end
 
 File.stream!("#{File.cwd!()}/input/2.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.split/1)
-|> Stream.map(&Advent.calculate_round/1)
+|> Stream.map(&Advent.score_single_round/1)
 |> Enum.sum()
 ```
 
@@ -103,8 +102,8 @@ Following the Elf's instructions for the second column, what would your total sc
 
 ```elixir
 defmodule Advent do
-  def calculate_round([other, me]) do
-    calculate(replace(other), replace(me))
+  def score_single_round([other, me]) do
+    score_single_round(replace(other), replace(me))
   end
 
   # A for Rock, B for Paper, and C for Scissors
@@ -122,26 +121,10 @@ defmodule Advent do
   # The score for a single round is
   # the score for the shape you selected
   # plus the score for the outcome of the round
-  defp calculate(other, choose) do
+  defp score_single_round(other, choose) do
     me = choose(other, choose)
-    score_shape(me) + score_rpc(other, me)
+    score_shape(me) + score_outcome(other, me)
   end
-
-  # (1 for Rock, 2 for Paper, and 3 for Scissors)
-  defp score_shape(:r), do: 1
-  defp score_shape(:p), do: 2
-  defp score_shape(:s), do: 3
-
-  # (0 if you lost, 3 if the round was a draw, and 6 if you won).
-  # cases where I (right) win
-  # (opponent, me)
-  defp score_rpc(:s, :r), do: 6
-  defp score_rpc(:p, :s), do: 6
-  defp score_rpc(:r, :p), do: 6
-  # draws  
-  defp score_rpc(same, same), do: 3
-  # all remaining cases are losses
-  defp score_rpc(_other, _me), do: 0
 
   # decide what to choose, depending on
   # what the other person has choosen
@@ -153,12 +136,27 @@ defmodule Advent do
   defp choose(:r, :lose), do: :s
   defp choose(:p, :lose), do: :r
   defp choose(:s, :lose), do: :p
+
+  # (1 for Rock, 2 for Paper, and 3 for Scissors)
+  defp score_shape(:r), do: 1
+  defp score_shape(:p), do: 2
+  defp score_shape(:s), do: 3
+
+  # (0 if you lost, 3 if the round was a draw, and 6 if you won).
+  # (opponent, me)
+  defp score_outcome(:s, :r), do: 6
+  defp score_outcome(:p, :s), do: 6
+  defp score_outcome(:r, :p), do: 6
+  # draws  
+  defp score_outcome(same, same), do: 3
+  # all remaining cases are losses
+  defp score_outcome(_other, _me), do: 0
 end
 
 File.stream!("#{File.cwd!()}/input/2.txt")
 |> Stream.map(&String.trim/1)
 |> Stream.map(&String.split/1)
-|> Stream.map(&Advent.calculate_round/1)
+|> Stream.map(&Advent.score_single_round/1)
 |> Enum.sum()
 ```
 
