@@ -213,7 +213,7 @@ Advent1.solve()
 1792
 ```
 
-Obviously, some optimations remain open:
+Obviously, some optimizations remain open:
 
 * rotate the forest directly, not by rotating it several times around one axe
 * Elixir has shortcuts for those accumulating functions, e.g. `tree_coords_line()`
