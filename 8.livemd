@@ -1,0 +1,221 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Day 8: Treetop Tree House
+
+## Story
+
+The expedition comes across a peculiar patch of tall trees all planted carefully in a grid. The Elves explain that a previous expedition planted these trees as a reforestation effort. Now, they're curious if this would be a good location for a tree house.
+
+First, determine whether there is enough tree cover here to keep a tree house hidden. To do this, you need to count the number of trees that are visible from outside the grid when looking directly along a row or column.
+
+The Elves have already launched a quadcopter to generate a map with the height of each tree (your puzzle input). For example:
+
+```
+30373
+25512
+65332
+33549
+35390
+```
+
+Each tree is represented as a single digit whose value is its height, where `0` is the shortest and `9` is the tallest.
+
+A tree is visible if all of the other trees between it and an edge of the grid are shorter than it. Only consider trees in the same row or column; that is, only look up, down, left, or right from any given tree.
+
+All of the trees around the edge of the grid are visible - since they are already on the edge, there are no trees to block the view. In this example, that only leaves the interior nine trees to consider:
+
+* The top-left 5 is visible from the left and top. (It isn't visible from the right or bottom since other trees of height 5 are in the way.)
+* The top-middle 5 is visible from the top and right.
+* The top-right 1 is not visible from any direction; for it to be visible, there would need to only be trees of height 0 between it and an edge.
+* The left-middle 5 is visible, but only from the right.
+* The center 3 is not visible from any direction; for it to be visible, there would need to be only trees of at most height 2 between it and an edge.
+* The right-middle 3 is visible from the right.
+* In the bottom row, the middle 5 is visible, but the 3 and 4 are not.
+
+With 16 trees visible on the edge and another 5 visible in the interior, a total of **21** trees are visible in this arrangement.
+
+Consider your map; how many trees are visible from outside the grid?
+
+## Solution
+
+My solution for part 1 is, instead of looking from each tree to the edges, to look from each edge to the trees.
+My reason for this is, that (I think that!) this keeps the solution within O(n) time complexity.[^1]
+Additionally, when looking from the edges, it is possible to stop looking if one has seen a tree with the hight of `9`.
+
+With this approach it gets really easy to determine the number of visible trees per line of sight.
+When the implementation for one line is done, it is easy to extend it to all lines.
+After this, the same implementation can be used to "look" from another side by just rotating the forest.
+Now one just have to be careful to not get confused by the resulting coordinates, which of course have to be rotated back to the reference point of view.
+
+[^1]: I was never good at determining time complexity, therefore I am really open for comments!
+
+```elixir
+defmodule Advent1 do
+  def solve() do
+    input =
+      "#{File.cwd!()}/input/8.txt"
+      |> Advent1.read_input()
+
+    input_lenght = length(input)
+
+    coords_from_left =
+      input
+      |> Advent1.look_from_left()
+
+    coords_from_below =
+      input
+      |> Advent1.look_from_below()
+      |> Advent1.coord_set_rotate_right(input_lenght)
+
+    coords_from_right =
+      input
+      |> Advent1.look_from_right()
+      |> Advent1.coord_set_rotate_2(input_lenght)
+
+    coords_from_up =
+      input
+      |> Advent1.look_from_up()
+      |> Advent1.coord_set_rotate_left(input_lenght)
+
+    MapSet.new()
+    |> MapSet.union(coords_from_left)
+    |> MapSet.union(coords_from_below)
+    |> MapSet.union(coords_from_right)
+    |> MapSet.union(coords_from_up)
+    |> MapSet.size()
+  end
+
+  def read_input(filename) do
+    File.stream!(filename)
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.graphemes/1)
+    |> Stream.map(fn x -> Enum.map(x, &String.to_integer/1) end)
+    |> Enum.to_list()
+  end
+
+  def look_from_left(forest) do
+    forest
+    |> Stream.map(&Advent1.visible_trees/1)
+    |> Enum.to_list()
+    |> Advent1.tree_coords()
+  end
+
+  def look_from_below(forest) do
+    forest
+    |> Advent1.trees_rotate()
+    |> Stream.map(&Advent1.visible_trees/1)
+    |> Enum.to_list()
+    |> Advent1.tree_coords()
+  end
+
+  def look_from_right(forest) do
+    forest
+    |> Advent1.trees_rotate()
+    |> Advent1.trees_rotate()
+    |> Stream.map(&Advent1.visible_trees/1)
+    |> Enum.to_list()
+    |> Advent1.tree_coords()
+  end
+
+  def look_from_up(forest) do
+    forest
+    |> Advent1.trees_rotate()
+    |> Advent1.trees_rotate()
+    |> Advent1.trees_rotate()
+    |> Stream.map(&Advent1.visible_trees/1)
+    |> Enum.to_list()
+    |> Advent1.tree_coords()
+  end
+
+  def visible_trees(row) do
+    visible_trees(row, -1, [], 0)
+  end
+
+  # shortcut: there is nothing to see behind a 9.
+  # append this 9 and stop looking
+  defp visible_trees([9 | _], _, visible_so_far, c) do
+    visible_so_far ++ [c]
+  end
+
+  defp visible_trees([tree | line_of_trees], max_so_far, visible_so_far, c) do
+    visible_so_far =
+      if tree > max_so_far do
+        # this three is visible if it is larger than the so far largest
+        visible_so_far ++ [c]
+      else
+        visible_so_far
+      end
+
+    max_so_far = max(tree, max_so_far)
+
+    visible_trees(line_of_trees, max_so_far, visible_so_far, c + 1)
+  end
+
+  defp visible_trees([], _, visible_so_far, _) do
+    visible_so_far
+  end
+
+  def tree_coords(forest) do
+    tree_coords(forest, 0, MapSet.new())
+  end
+
+  def tree_coords([line_of_trees | forest], line_no, coords) do
+    coords = MapSet.union(coords, tree_coords_line(line_of_trees, line_no))
+    tree_coords(forest, line_no + 1, coords)
+  end
+
+  def tree_coords([], _, coords) do
+    coords
+  end
+
+  defp tree_coords_line(line_of_trees, line_no) do
+    tree_coords_line(line_of_trees, line_no, MapSet.new())
+  end
+
+  def tree_coords_line([tree | line_of_trees], line_no, coords) do
+    coords = MapSet.put(coords, {line_no, tree})
+    tree_coords_line(line_of_trees, line_no, coords)
+  end
+
+  def tree_coords_line([], _, coords) do
+    coords
+  end
+
+  def trees_rotate(forest) do
+    Enum.zip_with(Enum.reverse(forest), & &1)
+  end
+
+  def coord_set_rotate_right(coord_set, input_lenght) do
+    coord_set
+    |> Stream.map(fn {x, y} -> {input_lenght - 1 - y, x} end)
+    |> MapSet.new()
+  end
+
+  def coord_set_rotate_left(coord_set, input_lenght) do
+    coord_set
+    |> Stream.map(fn {x, y} -> {y, input_lenght - 1 - x} end)
+    |> MapSet.new()
+  end
+
+  def coord_set_rotate_2(coord_set, input_lenght) do
+    coord_set
+    |> Stream.map(fn {x, y} -> {input_lenght - 1 - x, input_lenght - 1 - y} end)
+    |> MapSet.new()
+  end
+end
+
+Advent1.solve()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+1792
+```
+
+Obviously, some optimations remain open:
+
+* rotate the forest directly, not by rotating it several times around one axe
+* Elixir has shortcuts for those accumulating functions, e.g. `tree_coords_line()`
+* Is there a way to save the list convertion `|> Enum.to_list()` for example before handing the visible trees to `tree_coords()`?
+* ...?
