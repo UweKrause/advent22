@@ -10,68 +10,51 @@ defmodule Advent1 do
     File.stream!("#{File.cwd!()}/input/14_example.txt")
     |> Stream.map(&String.trim/1)
     |> Stream.map(&String.split/1)
-    |> Stream.map(&Advent1.split/1)
-    |> Stream.map(&Advent1.lines/1)
+    |> extract_koords_cave()
+
+    # |> IO.inspect(label: "cave coords")
+  end
+
+  # the cave is filled with paths of stones  
+
+  def extract_koords_cave(paths) do
+    paths
+    |> Stream.map(&Advent1.extract_coords_path/1)
+    # |> IO.inspect(label: "path coords")
     |> Enum.reduce(&MapSet.union/2)
   end
 
-  def split(path) do
+  # one line of input describes one path  
+
+  def extract_coords_path(path) do
     path
     |> Stream.filter(fn x -> x != "->" end)
-    |> Enum.to_list()
     |> Stream.map(fn x -> String.split(x, ",") end)
-    |> Stream.map(fn x -> Advent1.string_list_to_integer_list(x) end)
+    |> Stream.map(fn [x, y] -> [String.to_integer(x), String.to_integer(y)] end)
     |> Stream.map(fn [x, y] -> {x, y} end)
-    |> Enum.to_list()
+    |> Stream.chunk_every(2, 1, :discard)
+    # |> (Enum.to_list() |> IO.inspect(label: "edges"))
+    |> Stream.map(&extract_coords_edge/1)
+    # |> (Enum.to_list() |> IO.inspect(label: "edges coords"))
+    |> Enum.reduce(&MapSet.union/2)
   end
 
-  def string_list_to_integer_list(list) do
-    list
-    |> Stream.map(&String.to_integer/1)
-    |> Enum.to_list()
+  # one path is composed of one or more edges
+
+  def extract_coords_edge(edge) do
+    [node_start, node_end] = edge
+    extract_coords_nodes(node_start, node_end)
   end
 
-  def lines(lines) do
-    lines(lines, [], MapSet.new())
-  end
-
-  defp lines([h | t], [], set) do
-    lines(t, h, set)
-  end
-
-  defp lines([h | t], last, set) do
-    set = MapSet.union(set, line(h, last))
-    lines(t, h, set)
-  end
-
-  defp lines([], _last, set) do
-    set
-  end
-
-  def line(x, y) do
-    line_coords(x, y)
-  end
-
-  def line_coords({same, x2}, {same, y2}) do
-    Enum.to_list(x2..y2)
-    |> line_coords_to_set_y(same)
-  end
-
-  def line_coords({x1, same}, {y1, same}) do
-    Enum.to_list(x1..y1)
-    |> line_coords_to_set_x(same)
-  end
-
-  def line_coords_to_set_x(something, same) do
-    something
-    |> Enum.reverse()
+  # one edge is described by exactly two nodes: node_start, node_end
+  def extract_coords_nodes({x1, same}, {x2, same}) do
+    Enum.to_list(x2..x1)
     |> Stream.map(fn x -> {x, same} end)
     |> MapSet.new()
   end
 
-  def line_coords_to_set_y(something, same) do
-    something
-    |> Enum.reverse()
+  def extract_coords_nodes({same, y1}, {same, y2}) do
+    Enum.to_list(y2..y1)
     |> Stream.map(fn y -> {same, y} end)
     |> MapSet.new()
   end
@@ -83,5 +66,26 @@ Advent1.solve()
 <!-- livebook:{"output":true} -->
 
 ```
-nil
+MapSet.new([
+  {494, 9},
+  {495, 9},
+  {496, 6},
+  {496, 9},
+  {497, 6},
+  {497, 9},
+  {498, 4},
+  {498, 5},
+  {498, 6},
+  {498, 9},
+  {499, 9},
+  {500, 9},
+  {501, 9},
+  {502, 4},
+  {502, 5},
+  {502, 6},
+  {502, 7},
+  {502, 8},
+  {502, 9},
+  {503, 4}
+])
 ```
