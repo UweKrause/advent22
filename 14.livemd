@@ -5,7 +5,79 @@
 ## Section
 
 ```elixir
+defmodule Advent1 do
+  def solve do
+    File.stream!("#{File.cwd!()}/input/14_example.txt")
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.split/1)
+    |> Stream.map(&Advent1.split/1)
+    |> Stream.map(&Advent1.lines/1)
+    |> Enum.reduce(&MapSet.union/2)
+  end
 
+  def split(path) do
+    path
+    |> Stream.filter(fn x -> x != "->" end)
+    |> Enum.to_list()
+    |> Stream.map(fn x -> String.split(x, ",") end)
+    |> Stream.map(fn x -> Advent1.string_list_to_integer_list(x) end)
+    |> Stream.map(fn [x, y] -> {x, y} end)
+    |> Enum.to_list()
+  end
+
+  def string_list_to_integer_list(list) do
+    list
+    |> Stream.map(&String.to_integer/1)
+    |> Enum.to_list()
+  end
+
+  def lines(lines) do
+    lines(lines, [], MapSet.new())
+  end
+
+  defp lines([h | t], [], set) do
+    lines(t, h, set)
+  end
+
+  defp lines([h | t], last, set) do
+    set = MapSet.union(set, line(h, last))
+    lines(t, h, set)
+  end
+
+  defp lines([], _last, set) do
+    set
+  end
+
+  def line(x, y) do
+    line_coords(x, y)
+  end
+
+  def line_coords({same, x2}, {same, y2}) do
+    Enum.to_list(x2..y2)
+    |> line_coords_to_set_y(same)
+  end
+
+  def line_coords({x1, same}, {y1, same}) do
+    Enum.to_list(x1..y1)
+    |> line_coords_to_set_x(same)
+  end
+
+  def line_coords_to_set_x(something, same) do
+    something
+    |> Enum.reverse()
+    |> Stream.map(fn x -> {x, same} end)
+    |> MapSet.new()
+  end
+
+  def line_coords_to_set_y(something, same) do
+    something
+    |> Enum.reverse()
+    |> Stream.map(fn y -> {same, y} end)
+    |> MapSet.new()
+  end
+end
+
+Advent1.solve()
 ```
 
 <!-- livebook:{"output":true} -->
